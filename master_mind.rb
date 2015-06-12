@@ -1,35 +1,75 @@
-class MasterMind
 
-  def initialize
-    @numbers, @guess, @board, @turn, @guess_hist, @result, @result_hist = [1,2,3,4,5,6], [], [1,2,3,4,5,6], 0, {}, [], {}
+
+@code, @numbers, @guess, @board, @turn, @guess_hist, @result, @result_hist = [1,2,3,4,5,6], [1,2,3,4,5,6], [], [1,2,3,4,5,6], 0, {}, [1,2,3,4,5,6], {}
+
+
+def new_game
+  gen_code
+  while @turn < 12
+    get_guess
+    check_guess
+    draw_game
   end
+end
 
-  def new_game
+def draw_game
+  @guess_hist.each do |key, value|
+    print key.to_s
+    print " "
+    print draw_board(value)
+    print " ----- "
+    print " "
+    puts draw_board(@result_hist[key])
   end
+end
 
-  def draw_board(array)
-    print "| "
-    0.upto(5) {|i| print i == 4 ? array[i] : array[i], " | "}
-  end
+def draw_board(array)
+  print "| "
+  0.upto(5) {|i| print i == 4 ? array[i] : array[i], " | "}
+end
 
-  def gen_numbers
-  end
+def gen_code
+  @code = []
+  6.times {@code << rand(6)}
+end
 
-  def get_guess
-    0.upto(5) do |i|
-      puts "Guess for #{i+1}:"
+def get_guess
+  0.upto(5) do |i|
+    puts "Guess for #{i+1}:"
+    @guess[i] = gets.chomp.to_i
+    until @numbers.include? @guess[i]
+      puts "You must select integer 1-6:"
       @guess[i] = gets.chomp.to_i
-      until @numbers.include? @guess[i]
-        puts "You must select integer 1-6:"
-        @guess[i] = gets.chomp.to_i
+    end
+  end
+  @turn += 1;
+  guess_save = @guess
+  round = "r" << @turn.to_s
+  @guess_hist[@guess] = 0
+end
+
+def check_guess
+  temp_code = @code
+  temp_guess = @guess
+  0.upto(5) do |i|
+    if temp_code[i] == temp_guess[i]
+      @result[i] = "O"; temp_code[i] = "-"; temp_guess[i] = "-"
+    end
+  end
+  0.upto(5) do |i|
+    if temp_code[i] != "-"
+      if temp_code.include? temp_guess[i]
+        @result[i] = "X"
+        temp_guess[i] = "-"
+        temp_code.delete_at(temp_code.index(i) || temp_code.length)
       end
     end
-    @turn += 1; @guess_hist["r" << @turn.to_s] = @guess
   end
-
-  def check_guess
-    0.upto(5) do |i|
-      
+  0.upto(5) do |i|
+    if @result[i].is_a? Integer
+      @result[i] = "-"
     end
   end
+  round = "r" << @turn.to_s
+  @result_hist[@guess] = @result
 end
