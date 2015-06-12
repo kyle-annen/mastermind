@@ -24,10 +24,12 @@ class MasterMind
         @guess[i] = gets.chomp.to_i
       end
     end
-    @turn += 1; round = "r" << @turn.to_s; @guess_hist[round] = @guess #error in hash addition, fix
+    @turn += 1; @guess_hist["r" << @turn.to_s] = @guess
   end
 
   def check_guess
-
+    0.upto(5) do |i|
+      
+    end
   end
 end
